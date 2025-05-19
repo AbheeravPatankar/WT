@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Book Store</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+
+    cart = []
+    function add_book_to_cart(book){
+        console.log("adding book to cart");
+        cart.push(book);
+        console.log(cart);
+    }
+
+
+
+     function displayBooks() {
+      console.log("Fetching data...");
+      axios.get('http://localhost:3000/books')
+        .then(res => {
+          const books = res.data;
+          console.log("Creating elements...");
+          
+          for (let book of books) {
+            // Create elements
+            const bookDiv = document.createElement('div');
+            const bookName = document.createElement('p');
+            const bookAuthor = document.createElement('p');
+            const bookPrice = document.createElement('p');
+            line_br = document.createElement('hr');
+            const img = document.createElement('img');
+            const add_to_cart = document.createElement('button');
+            // Set content
+            bookName.textContent = "Name: " + book.name;
+            bookAuthor.textContent = "Author: " + book.author;
+            bookPrice.textContent = "Price: $" + book.price;
+            img.src = "./book.png";
+            add_to_cart.textContent = "add to cart";
+            add_to_cart.onclick = function () {
+                add_book_to_cart(book);
+            };
+
+            // Append <p> to <div>
+            bookDiv.appendChild(line_br);
+            bookDiv.appendChild(img);
+            bookDiv.appendChild(bookName);
+            bookDiv.appendChild(bookAuthor);
+            bookDiv.appendChild(bookPrice);
+            bookDiv.appendChild(add_to_cart);
+
+            // Append <div> to body
+            document.body.appendChild(bookDiv);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching books:", error);
+        });
+    };
+
+    function add_book(){
+        
+        class Book{
+            constructor(name,author,price){
+                this.name = name;
+                this.author = author;
+                this.price = price;
+            }
+        }
+
+        book_name = document.getElementById("book_name").value;
+        book_author = document.getElementById("book_author").value;
+        book_price = document.getElementById("book_price").value;
+        let book = new Book(book_name, book_author,book_price);
+        console.log(book);
+
+        axios.post('http://localhost:3000/add_book', book, {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => {
+  console.log("Success:", response.data);
+})
+.catch(error => {
+  console.log("Error sending POST request:", error);
+});
+
+    }
+
+  </script>
+</head>
+<body>
+  <h2>Online Book Store</h2>
+  <a href="#create_book"> add a new book </a>
+  <button onclick="displayBooks()">display Books</button>
+  <div id="create_book" >
+    <p>book name </p>
+    <input type="text" id="book_name">
+    <p>book author </p>
+    <input type="text" id="book_author">
+    <p>book price </p>
+    <input type="text" id="book_price">
+    <button onclick="add_book()"> Submit </button>
+  </div>
+</body>
+</html>
