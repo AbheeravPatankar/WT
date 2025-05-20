@@ -1,0 +1,62 @@
+<html>
+    <head>
+         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+    function calculate_grade(name){
+        console.log("calculating for the name " + name);
+        axios.get("http://localhost:8080/calc_grade/" + name)
+        .then(res => {
+
+            console.log(res.data);
+            p_name = document.createElement('p');
+            p_name.textContent = res.data[0];
+
+            p_grade = document.createElement('p');
+            p_grade.textContent = res.data[3];
+
+            document.body.appendChild(p_name);
+            document.body.appendChild(p_grade);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+
+
+    }
+
+    window.onload = function () {
+        axios.get('http://localhost:8080/get_students')
+        .then(res => {
+            console.log(res.data);
+            let select = document.getElementById("names");
+
+            for (let index in res.data) {
+                console.log(res.data[index]);
+                let opt = document.createElement("option");
+                opt.value = res.data[index];
+                opt.textContent = res.data[index];
+                select.appendChild(opt);
+            }
+
+            let calc_button = document.createElement("button");
+            calc_button.textContent = "Get Grade";
+            calc_button.onclick = function() {
+                calculate_grade(select.value);
+            };
+            document.body.appendChild(calc_button);
+        })
+        .catch(error => {
+            console.log("error occurred");
+            console.log(error);
+        });
+    };
+</script>
+
+    </head>
+    <body>
+        <h1>Grade calculator ..</h1>
+        <select id="names">
+           
+        </select>
+    </body>
+</html>
